@@ -93,6 +93,16 @@ with real data behind it. Contact the maintainer for access.
   achievements, career guidance & placement stats, contact info) that
   powers the public `/` page on the frontend — `GET` is public
   (no login), `PUT` is admin-only.
+- **Bulk import**: a downloadable multi-sheet `.xlsx` template
+  (`GET /import/template`) and a matching `POST /import` that reads it back
+  through the same crud functions the UI uses — Classes, Sections,
+  Subjects, Students, and Employees, in that dependency order, resolving
+  Class/Section references by name. Each row is independent: a bad row is
+  recorded as an error and skipped rather than failing the whole file.
+- **Sample/demo data**: `POST /demo-data/install` populates every module
+  with fictional but realistic data for trying the app out, tracking every
+  row it creates in a small ledger table so `POST /demo-data/remove`
+  deletes exactly those rows and nothing a real user entered.
 
 This covers the full pipeline the project set out to build: **advertisement
 → admission enquiry → enrolled student → academics/exams → fees → hostel/
@@ -136,6 +146,17 @@ includes:
   facilities, faculty, achievements, career guidance, contact), editable
   by an admin from **Public Site Content** in the sidebar — no code change
   needed to update it.
+- **Staff Logins** and **Roles & Permissions** pages to manage who can log
+  in and what each role can do, on top of the auth/RBAC the backend already
+  had.
+- **Import Data**: download a single Excel workbook (one sheet per record
+  type — Classes, Sections, Subjects, Students, Employees — with a Read Me
+  sheet), fill it in, upload it back. Rows reference classes/sections by
+  name, not id, and a bad row is skipped and reported rather than failing
+  the whole file.
+- **Sample Data**: one click fills every module with realistic fictional
+  data for testing/demos, and one click removes exactly what it created —
+  useful for trying the app out before entering real data.
 - Mobile-responsive layout (collapsible sidebar, stacking forms) down to
   phone-sized viewports.
 

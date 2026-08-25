@@ -23,6 +23,7 @@ import { SiteContentPage } from './pages/settings/SiteContentPage'
 import { DemoDataPage } from './pages/settings/DemoDataPage'
 import { UsersPage } from './pages/settings/UsersPage'
 import { RolesPage } from './pages/settings/RolesPage'
+import { ImportDataPage } from './pages/settings/ImportDataPage'
 
 export default function App() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
           <Route path="/settings/demo-data" element={<DemoDataPage />} />
           <Route path="/settings/users" element={<UsersPage />} />
           <Route path="/settings/roles" element={<RolesPage />} />
+          <Route path="/settings/import" element={<ImportDataPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

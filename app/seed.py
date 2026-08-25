@@ -117,6 +117,7 @@ PERMISSIONS = [
     ("attendance.index", "Attendance View", "Attendance"),
     ("attendance.mark", "Attendance Mark", "Attendance"),
     ("demo_data.manage", "Install/Remove Sample Data", "Demo Data"),
+    ("data_import.manage", "Bulk Import Data from Excel", "Data Import"),
 ]
 
 

@@ -22,6 +22,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/exams', label: 'Exams & Results', enabled: true },
   { to: '/certificates', label: 'Certificates', enabled: true },
   { to: '/hr', label: 'HR & Payroll', enabled: true },
+  { to: '/settings/import', label: 'Import Data', enabled: true },
   { to: '/settings/site-content', label: 'Public Site Content', enabled: true },
   { to: '/settings/users', label: 'Staff Logins', enabled: true },
   { to: '/settings/roles', label: 'Roles & Permissions', enabled: true },
