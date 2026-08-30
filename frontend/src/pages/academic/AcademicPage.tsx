@@ -11,6 +11,7 @@ import {
   type SectionCreate,
   type Subject,
   type SubjectCreate,
+  type User,
 } from '../../types/api'
 
 function ClassesSection() {
@@ -152,6 +153,11 @@ function SectionsSection() {
     queryFn: async () => (await api.get<SchoolClass[]>('/academic/classes')).data,
   })
 
+  const usersQuery = useQuery({
+    queryKey: ['users'],
+    queryFn: async () => (await api.get<User[]>('/users')).data,
+  })
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['sections'],
     queryFn: async () => (await api.get<Section[]>('/academic/sections')).data,
@@ -182,10 +188,11 @@ function SectionsSection() {
   })
 
   const classById = new Map((classesQuery.data ?? []).map((c) => [c.id, c.name]))
+  const userById = new Map((usersQuery.data ?? []).map((u) => [u.id, u.name]))
 
   function startEdit(s: Section) {
     setEditingId(s.id)
-    setEditForm({ name: s.name, capacity: s.capacity, class_id: s.class_id })
+    setEditForm({ name: s.name, capacity: s.capacity, class_id: s.class_id, teacher_id: s.teacher_id })
   }
 
   function handleDelete(id: number) {
@@ -205,6 +212,7 @@ function SectionsSection() {
             { label: 'Name', value: (s) => s.name },
             { label: 'Class', value: (s) => classById.get(s.class_id) ?? `#${s.class_id}` },
             { label: 'Capacity', value: (s) => s.capacity },
+            { label: 'Teacher', value: (s) => (s.teacher_id ? userById.get(s.teacher_id) ?? `#${s.teacher_id}` : '') },
           ]}
         />
       }
@@ -215,7 +223,7 @@ function SectionsSection() {
           if (!form.class_id) return
           createMutation.mutate(form)
         }}
-        className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4"
+        className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-5"
       >
         <Field label="Name" required>
           <input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="input" placeholder="e.g. A" />
@@ -244,6 +252,20 @@ function SectionsSection() {
             className="input"
           />
         </Field>
+        <Field label="Teacher">
+          <select
+            value={form.teacher_id ?? ''}
+            onChange={(e) => setForm((f) => ({ ...f, teacher_id: e.target.value ? Number(e.target.value) : null }))}
+            className="input"
+          >
+            <option value="">Unassigned</option>
+            {usersQuery.data?.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
+        </Field>
         <div className="flex items-end">
           <PrimaryButton type="submit" disabled={createMutation.isPending} className="w-full">
             + Add
@@ -251,7 +273,7 @@ function SectionsSection() {
         </div>
       </form>
       <ErrorNote error={createMutation.error ?? updateMutation.error ?? deleteMutation.error} />
-      <Table columns={['Name', 'Class', 'Capacity', '']} isLoading={isLoading} error={error} isEmpty={data?.length === 0}>
+      <Table columns={['Name', 'Class', 'Capacity', 'Teacher', '']} isLoading={isLoading} error={error} isEmpty={data?.length === 0}>
         {data?.map((s) =>
           editingId === s.id ? (
             <tr key={s.id} className="bg-slate-50">
@@ -283,6 +305,20 @@ function SectionsSection() {
                   className="input"
                 />
               </td>
+              <td className="px-4 py-3">
+                <select
+                  value={editForm.teacher_id ?? ''}
+                  onChange={(e) => setEditForm((f) => ({ ...f, teacher_id: e.target.value ? Number(e.target.value) : null }))}
+                  className="input"
+                >
+                  <option value="">Unassigned</option>
+                  {usersQuery.data?.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.name}
+                    </option>
+                  ))}
+                </select>
+              </td>
               <td className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
                   <PrimaryButton
@@ -300,6 +336,9 @@ function SectionsSection() {
               <td className="px-4 py-3 font-medium text-slate-900">{s.name}</td>
               <td className="px-4 py-3 text-slate-600">{classById.get(s.class_id) ?? `#${s.class_id}`}</td>
               <td className="px-4 py-3 text-slate-600">{s.capacity}</td>
+              <td className="px-4 py-3 text-slate-600">
+                {s.teacher_id ? userById.get(s.teacher_id) ?? `#${s.teacher_id}` : '—'}
+              </td>
               <td className="px-4 py-3 text-right">
                 <div className="flex justify-end gap-2">
                   <SecondaryButton onClick={() => startEdit(s)}>Edit</SecondaryButton>
